@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
+import { Analytics } from "@vercel/analytics/react";
 
 const COLORS = {
   cream: "#FBF6E9",
@@ -952,10 +953,12 @@ export default function App() {
   const progressColor = pct < 0.4 ? COLORS.hibiscus : pct < 0.7 ? COLORS.sun : COLORS.leaf;
 
   return (
-    <div style={{ minHeight: "560px", background: COLORS.cream, fontFamily: "'Trebuchet MS', 'Segoe UI', sans-serif", color: COLORS.ink, borderRadius: "16px", overflow: "hidden" }}>
-      <Confetti active={confetti} />
-      {showDuitNow && <DuitNowModal onClose={dismissDuitNow} />}
-      <FeedbackToast msg={toast} show={showToast} />
+    <>
+      <Analytics />
+      <div style={{ minHeight: "560px", background: COLORS.cream, fontFamily: "'Trebuchet MS', 'Segoe UI', sans-serif", color: COLORS.ink, borderRadius: "16px", overflow: "hidden" }}>
+        <Confetti active={confetti} />
+        {showDuitNow && <DuitNowModal onClose={dismissDuitNow} />}
+        <FeedbackToast msg={toast} show={showToast} />
 
       {/* HEADER */}
       <div style={{ background: `linear-gradient(135deg, ${COLORS.skyDark}, ${COLORS.sky})`, padding: "18px 22px", display: "flex", alignItems: "center", gap: "14px" }}>
@@ -1249,5 +1252,6 @@ export default function App() {
         )}
       </div>
     </div>
+    </>
   );
 }
