@@ -724,7 +724,7 @@ function DuitNowModal({ onClose }) {
 
 // ---------- MAIN APP ----------
 export default function App() {
-  const [screen, setScreen] = useState("home");
+  const [screen, setScreen] = useState("splash");
   const [tahun, setTahun] = useState(1);
   const [setKey, setSetKey] = useState("A");
   const [qIndex, setQIndex] = useState(0);
@@ -744,9 +744,44 @@ export default function App() {
   const [progress, setProgress] = useState({});
   const [progressLoaded, setProgressLoaded] = useState(false);
   const [sessionActive, setSessionActive] = useState(false);
+  const [selectedYear, setSelectedYear] = useState(null);
   const toastTimer = useRef(null);
   const [showDuitNow, setShowDuitNow] = useState(false);
   const duitNowTimer = useRef(null);
+
+  const storageGet = async key => {
+    if (typeof window !== "undefined" && window.storage) {
+      try {
+        const res = await window.storage.get(key, false);
+        return res && res.value ? JSON.parse(res.value) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : null;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const storageSet = async (key, value) => {
+    const payload = JSON.stringify(value);
+    if (typeof window !== "undefined" && window.storage) {
+      try {
+        await window.storage.set(key, payload, false);
+        return;
+      } catch (e) {
+        // fallback to localStorage
+      }
+    }
+    try {
+      window.localStorage.setItem(key, payload);
+    } catch (e) {
+      // ignore write errors
+    }
+  };
 
   // Inject CSS keyframes once
   useEffect(() => {
@@ -761,6 +796,7 @@ export default function App() {
       @keyframes streakPop { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
       @keyframes cardSlide { 0%{transform:translateX(30px);opacity:0} 100%{transform:translateX(0);opacity:1} }
       @keyframes correctPulse { 0%{box-shadow:0 0 0 0 rgba(92,138,58,0.5)} 70%{box-shadow:0 0 0 10px rgba(92,138,58,0)} 100%{box-shadow:0 0 0 0 rgba(92,138,58,0)} }
+      @keyframes splashPulse { 0%,100%{transform:scale(0.96);opacity:0.8} 50%{transform:scale(1.05);opacity:1} }
     `;
     document.head.appendChild(style);
     return () => document.head.removeChild(style);
@@ -772,10 +808,8 @@ export default function App() {
       for (const lv of [1, 2, 3, 4, 5, 6]) {
         for (const set of ["A", "B", "C"]) {
           const key = `progress:D${lv}-${set}`;
-          try {
-            const res = await window.storage.get(key, false);
-            if (res && res.value) next[key] = JSON.parse(res.value);
-          } catch (e) {}
+          const record = await storageGet(key);
+          if (record) next[key] = record;
         }
       }
       setProgress(next);
@@ -783,6 +817,13 @@ export default function App() {
     }
     loadProgress();
   }, []);
+
+  useEffect(() => {
+    const splashTimer = setTimeout(() => {
+      if (screen === "splash") setScreen("home");
+    }, 1400);
+    return () => clearTimeout(splashTimer);
+  }, [screen]);
 
   // Random DuitNow popup timer (3–7 min intervals, not during active answering)
   useEffect(() => {
@@ -827,6 +868,7 @@ export default function App() {
   function startQuiz(level, set) {
     playSound("start");
     setTahun(level);
+    setSelectedYear(level);
     setSetKey(set);
     setQIndex(0);
     setScore(0);
@@ -901,7 +943,7 @@ export default function App() {
       lastPlayed: new Date().toISOString(),
     };
     setProgress(p => ({ ...p, [key]: record }));
-    try { await window.storage.set(key, JSON.stringify(record), false); } catch (e) {}
+    await storageSet(key, record);
     setSessionActive(false);
     setScreen("result");
   }
@@ -939,68 +981,94 @@ export default function App() {
 
       <div style={{ padding: "20px" }}>
 
+        {/* SPLASH SCREEN */}
+        {screen === "splash" && (
+          <div style={{ minHeight: "320px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", gap: "18px", color: COLORS.skyDark }}>
+            <div style={{ fontSize: "54px", lineHeight: 1 }}>📚</div>
+            <div style={{ fontSize: "26px", fontWeight: 800 }}>Selamat Datang ke Kelas BM</div>
+            <div style={{ maxWidth: "360px", fontSize: "14px", color: COLORS.ink, lineHeight: 1.7 }}>
+              Latihan interaktif Tahun 1–6. Pilih tahun dan set untuk mula berlatih.
+            </div>
+            <div style={{ width: "72px", height: "72px", borderRadius: "50%", border: `4px solid ${COLORS.sky}`, display: "flex", justifyContent: "center", alignItems: "center", animation: "splashPulse 1.3s ease-in-out infinite" }}>
+              <span style={{ fontSize: "24px" }}>⏳</span>
+            </div>
+          </div>
+        )}
+
         {/* HOME SCREEN */}
-        {screen === "home" && (
+        {screen === "home" && !selectedYear && (
           <div>
             <div style={{ textAlign: "center", marginBottom: "16px" }}>
               <div style={{ fontSize: "40px" }}>🏆</div>
-                <p style={{ fontSize: "15px", color: COLORS.ink, margin: "6px 0" }}>
-                Pilih tahun dan set latihan. Jawab soalan, kumpul XP, dan pecahkan rekod skor terbaik kamu! 🔥
+              <p style={{ fontSize: "15px", color: COLORS.ink, margin: "6px 0" }}>
+                Pilih tahun latihan dahulu. Setelah itu, pilih set soalan untuk Tahun tersebut.
               </p>
             </div>
-            {progressLoaded && (
-              <div style={{ fontSize: "12px", color: COLORS.skyDark, background: "#E3F2FA", borderRadius: "10px", padding: "8px 14px", marginBottom: "14px", textAlign: "center" }}>
-                ⚡ Skor terbaik disimpan secara automatik selepas setiap latihan.
-              </div>
-            )}
-            <div style={{ display: "grid", gap: "10px" }}>
+            <div style={{ display: "grid", gap: "12px" }}>
               {[1, 2, 3, 4, 5, 6].map(lv => (
-                <div key={lv} style={{ border: "1.5px solid #E5E0CF", background: "white", borderRadius: "14px", padding: "12px 14px", boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2px" }}>
-                    <span style={{ fontSize: "16px", fontWeight: 700, color: COLORS.skyDark }}>Tahun {lv}</span>
-                    <span style={{ fontSize: "11px", color: COLORS.ink, opacity: 0.7 }}>A/B: 20 soalan · C-KBAT: 20 soalan</span>
-                  </div>
-                  <div style={{ fontSize: "11px", color: COLORS.ink, opacity: 0.8, marginBottom: "8px" }}>{TAHUN_FOCUS[lv]}</div>
-                  <div style={{ display: "flex", gap: "6px" }}>
-                    {[
-                      { set: "A", label: "Set A", emoji: "📘", bg: COLORS.sky, color: "white" },
-                      { set: "B", label: "Set B", emoji: "📙", bg: COLORS.sun, color: COLORS.sunDark },
-                      { set: "C", label: "KBAT", emoji: "🧠", bg: COLORS.hibiscus, color: "white" },
-                    ].map(s => {
-                      const rec = progress[`progress:D${lv}-${s.set}`];
-                      const perfect = rec && rec.bestScore === rec.total;
-                      const isCurrentSession = sessionActive && lv === tahun && s.set === setKey;
-                      return (
-                        <button key={s.set} onClick={() => {
-                          if (isCurrentSession) {
-                            setScreen("quiz");
-                          } else {
-                            startQuiz(lv, s.set);
-                          }
-                        }}
-                          style={{
-                            flex: 1, background: s.bg, color: s.color, border: isCurrentSession ? `2px solid ${COLORS.ink}` : "none",
-                            borderRadius: "10px", padding: "8px 4px", fontWeight: 700, cursor: "pointer",
-                            fontFamily: "inherit", fontSize: "12px", display: "flex",
-                            flexDirection: "column", alignItems: "center", gap: "2px",
-                            boxShadow: "0 2px 4px rgba(0,0,0,0.15)",
-                            position: "relative", overflow: "hidden",
-                          }}>
-                          {perfect && <span style={{ position: "absolute", top: 2, right: 4, fontSize: "10px" }}>⭐</span>}
-                          <span style={{ fontSize: "16px" }}>{s.emoji}</span>
-                          <span>{s.label}</span>
-                          <span style={{ fontSize: "10px", fontWeight: 400, opacity: 0.9 }}>
-                            {rec ? `${rec.bestScore}/${rec.total}` : "Belum dicuba"}
-                          </span>
-                          {isCurrentSession && (
-                            <span style={{ fontSize: "10px", fontWeight: 700, opacity: 0.9, marginTop: "4px" }}>Teruskan</span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                <button key={lv} onClick={() => setSelectedYear(lv)}
+                  style={{
+                    width: "100%", textAlign: "left", padding: "18px 16px",
+                    background: "white", border: `2px solid ${COLORS.sky}`, borderRadius: "14px",
+                    cursor: "pointer", fontFamily: "inherit", boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                  }}>
+                  <div style={{ fontSize: "16px", fontWeight: 700, color: COLORS.skyDark }}>Tahun {lv}</div>
+                  <div style={{ fontSize: "12px", color: COLORS.ink, opacity: 0.8, marginTop: "6px" }}>{TAHUN_FOCUS[lv]}</div>
+                </button>
               ))}
+            </div>
+          </div>
+        )}
+
+        {screen === "home" && selectedYear !== null && (
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+              <button onClick={() => setSelectedYear(null)}
+                style={{
+                  background: "none", border: "none", color: COLORS.skyDark,
+                  cursor: "pointer", fontSize: "14px", fontWeight: 700,
+                }}>
+                ← Pilih Tahun Lain
+              </button>
+              <div style={{ fontSize: "14px", fontWeight: 700, color: COLORS.skyDark }}>Tahun {selectedYear}</div>
+            </div>
+            <div style={{ fontSize: "12px", color: COLORS.skyDark, background: "#E3F2FA", borderRadius: "10px", padding: "10px 14px", marginBottom: "14px", textAlign: "center" }}>
+              Pilih salah satu set untuk Tahun {selectedYear}.
+            </div>
+            <div style={{ display: "grid", gap: "10px" }}>
+              {[
+                { set: "A", label: "Set A", emoji: "📘", bg: COLORS.sky, color: "white" },
+                { set: "B", label: "Set B", emoji: "📙", bg: COLORS.sun, color: COLORS.sunDark },
+                { set: "C", label: "KBAT", emoji: "🧠", bg: COLORS.hibiscus, color: "white" },
+              ].map(s => {
+                const rec = progress[`progress:D${selectedYear}-${s.set}`];
+                const perfect = rec && rec.bestScore === rec.total;
+                const isCurrentSession = sessionActive && selectedYear === tahun && s.set === setKey;
+                return (
+                  <button key={s.set} onClick={() => {
+                    if (isCurrentSession) {
+                      setScreen("quiz");
+                    } else {
+                      startQuiz(selectedYear, s.set);
+                    }
+                  }}
+                    style={{
+                      width: "100%", padding: "16px 14px", display: "flex", justifyContent: "space-between",
+                      alignItems: "center", borderRadius: "14px", background: s.bg, color: s.color,
+                      border: isCurrentSession ? `2px solid ${COLORS.ink}` : "none",
+                      cursor: "pointer", fontFamily: "inherit", boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                    }}>
+                    <div style={{ textAlign: "left" }}>
+                      <div style={{ fontSize: "15px", fontWeight: 700 }}>{s.label}</div>
+                      <div style={{ fontSize: "12px", opacity: 0.9 }}>{rec ? `${rec.bestScore}/${rec.total} terbaik` : "Belum dicuba"}</div>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+                      <div style={{ fontSize: "24px" }}>{s.emoji}</div>
+                      {isCurrentSession && <div style={{ fontSize: "12px", fontWeight: 700 }}>Teruskan</div>}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
