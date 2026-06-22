@@ -743,6 +743,7 @@ export default function App() {
   const [attemptSeed, setAttemptSeed] = useState(0);
   const [progress, setProgress] = useState({});
   const [progressLoaded, setProgressLoaded] = useState(false);
+  const [sessionActive, setSessionActive] = useState(false);
   const toastTimer = useRef(null);
   const [showDuitNow, setShowDuitNow] = useState(false);
   const duitNowTimer = useRef(null);
@@ -838,6 +839,7 @@ export default function App() {
     setMascotMood("neutral");
     setConfetti(false);
     setAttemptSeed(s => s + 1);
+    setSessionActive(true);
     setScreen("quiz");
   }
 
@@ -900,6 +902,7 @@ export default function App() {
     };
     setProgress(p => ({ ...p, [key]: record }));
     try { await window.storage.set(key, JSON.stringify(record), false); } catch (e) {}
+    setSessionActive(false);
     setScreen("result");
   }
 
@@ -966,10 +969,17 @@ export default function App() {
                     ].map(s => {
                       const rec = progress[`progress:D${lv}-${s.set}`];
                       const perfect = rec && rec.bestScore === rec.total;
+                      const isCurrentSession = sessionActive && lv === tahun && s.set === setKey;
                       return (
-                        <button key={s.set} onClick={() => startQuiz(lv, s.set)}
+                        <button key={s.set} onClick={() => {
+                          if (isCurrentSession) {
+                            setScreen("quiz");
+                          } else {
+                            startQuiz(lv, s.set);
+                          }
+                        }}
                           style={{
-                            flex: 1, background: s.bg, color: s.color, border: "none",
+                            flex: 1, background: s.bg, color: s.color, border: isCurrentSession ? `2px solid ${COLORS.ink}` : "none",
                             borderRadius: "10px", padding: "8px 4px", fontWeight: 700, cursor: "pointer",
                             fontFamily: "inherit", fontSize: "12px", display: "flex",
                             flexDirection: "column", alignItems: "center", gap: "2px",
@@ -982,6 +992,9 @@ export default function App() {
                           <span style={{ fontSize: "10px", fontWeight: 400, opacity: 0.9 }}>
                             {rec ? `${rec.bestScore}/${rec.total}` : "Belum dicuba"}
                           </span>
+                          {isCurrentSession && (
+                            <span style={{ fontSize: "10px", fontWeight: 700, opacity: 0.9, marginTop: "4px" }}>Teruskan</span>
+                          )}
                         </button>
                       );
                     })}
@@ -995,6 +1008,20 @@ export default function App() {
         {/* QUIZ SCREEN */}
         {screen === "quiz" && current && (
           <div>
+            {/* Back button + topic header */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+              <button onClick={() => setScreen("home")}
+                style={{
+                  background: "rgba(255,255,255,0.95)", border: `1px solid ${COLORS.skyDark}`,
+                  color: COLORS.skyDark, borderRadius: "10px", padding: "8px 12px",
+                  cursor: "pointer", fontFamily: "inherit", fontWeight: 700,
+                }}>
+                ← Kembali
+              </button>
+              <div style={{ fontSize: "12px", color: COLORS.ink, fontWeight: 700 }}>
+                Tahun {tahun} · Set {setKey}
+              </div>
+            </div>
             {/* Top bar: topic badge + mascot + streak */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
               <span style={{
