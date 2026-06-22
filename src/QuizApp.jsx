@@ -679,19 +679,20 @@ function DuitNowModal({ onClose }) {
           App ini percuma untuk semua murid. Jika anda rasa ia bermanfaat, sokongan anda sangat kami hargai! 🙏
         </div>
 
-        {/* QR Code area — GANTIKAN INI dengan QR DuitNow anda */}
+        {/* QR Code area — replace the image file at public/duitnow-qr.png with your QR image */}
         <div style={{
-          width: "200px", height: "200px", margin: "0 auto 18px",
-          border: "2px dashed #E31837", borderRadius: "12px",
-          display: "flex", flexDirection: "column",
-          alignItems: "center", justifyContent: "center",
-          background: "#FFF5F5", gap: "8px",
+          width: "220px", height: "220px", margin: "0 auto 18px",
+          borderRadius: "18px", overflow: "hidden",
+          background: "#FFF5F5", display: "flex", alignItems: "center", justifyContent: "center",
+          border: "2px solid #E31837",
         }}>
-          {/* 👇 GANTIKAN blok ini dengan <img src="qr-anda.png" width="196" height="196" style={{borderRadius:10}} /> */}
-          <div style={{ fontSize: "48px" }}>📱</div>
-          <div style={{ fontSize: "11px", color: "#C0102C", fontWeight: 600, padding: "0 12px", textAlign: "center" }}>
-            Letak QR DuitNow anda di sini
-          </div>
+          <img
+            src="/duitnow-qr.png"
+            alt="DuitNow QR Code"
+            width="196"
+            height="196"
+            style={{ borderRadius: 12, objectFit: "cover" }}
+          />
         </div>
 
         {/* Suggested amounts */}
