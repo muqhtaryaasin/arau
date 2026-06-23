@@ -682,7 +682,7 @@ function DuitNowModal({ onClose }) {
 
         {/* QR Code area — replace the image file at public/duitnow-qr.png with your QR image */}
         <div style={{
-          width: "220px", height: "220px", margin: "0 auto 18px",
+          width: "320px", height: "320px", margin: "0 auto 18px",
           borderRadius: "18px", overflow: "hidden",
           background: "#FFF5F5", display: "flex", alignItems: "center", justifyContent: "center",
           border: "2px solid #E31837",
@@ -690,8 +690,8 @@ function DuitNowModal({ onClose }) {
           <img
             src="/duitnow-qr.png"
             alt="DuitNow QR Code"
-            width="196"
-            height="196"
+            width="300"
+            height="300"
             style={{ borderRadius: 12, objectFit: "cover" }}
           />
         </div>
