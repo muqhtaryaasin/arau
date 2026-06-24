@@ -410,7 +410,7 @@ export default function DashboardScreen({ onBack, onStartQuiz }) {
           <strong>❓ Soalan Lazim:</strong>
         </p>
         <ul style={{ margin: '0 0 0 16px', padding: 0 }}>
-          <li>Soalan baru ditambah setiap Isnin</li>
+          <li>Bayar sekali, akses Set B dan KBAT seumur hidup</li>
           <li>Set B dan C hanya untuk ahli Premium</li>
           <li>Skor tersimpan secara automatik</li>
           <li>Profil ibu bapa dan anak boleh dikemas kini di sini</li>

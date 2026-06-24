@@ -81,13 +81,13 @@ export default function UpgradeModal({ onClose }) {
         <div style={{ fontSize: 48, marginBottom: 16 }}>🌟</div>
         <h2 style={{ fontSize: 28, margin: '0 0 12px 0', fontFamily: 'var(--font-display)', lineHeight: 1 }}>Naik Taraf ke Premium</h2>
         <p style={{ color: '#666', marginBottom: 16 }}>
-          Set B dan C hanya tersedia untuk ahli Premium. Dapatkan akses ke soalan baru setiap minggu!
+          Set B dan KBAT hanya tersedia untuk ahli Premium. Bayar sekali, akses seumur hidup!
         </p>
 
         <div style={{ backgroundColor: '#f0f0f0', padding: 16, borderRadius: 8, marginBottom: 16 }}>
           <div style={{ textAlign: 'left', fontSize: 14 }}>
-            <div style={{ marginBottom: 8 }}>✅ Akses Set A, B, dan C</div>
-            <div style={{ marginBottom: 8 }}>✅ Soalan baru setiap minggu</div>
+            <div style={{ marginBottom: 8 }}>✅ Akses Set A, Set B dan KBAT</div>
+            <div style={{ marginBottom: 8 }}>✅ Bayar sekali, guna selamanya</div>
             <div style={{ marginBottom: 8 }}>✅ Penjejakan kemajuan terperinci</div>
             <div>✅ Tiada iklan</div>
           </div>
@@ -95,7 +95,7 @@ export default function UpgradeModal({ onClose }) {
 
         <div style={{ marginBottom: 16 }}>
           <div style={{ fontSize: 32, fontWeight: 700, color: '#FF9800' }}>RM10</div>
-          <div style={{ color: '#666', fontSize: 12 }}>Setiap bulan</div>
+          <div style={{ color: '#666', fontSize: 12 }}>Pembayaran sekali sahaja</div>
         </div>
 
         {error && (

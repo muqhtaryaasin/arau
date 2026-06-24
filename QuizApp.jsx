@@ -606,7 +606,7 @@ export default function App() {
                 <small style={{ color: '#666', textAlign: "left", lineHeight: 1.35, flex: "1 1 260px", fontSize: 13 }}>A: 20 soalan percuma · B/KBAT: 20 soalan Premium</small>
               </div>
               <div style={{ fontSize: 12, color: COLORS.ink, opacity: 0.82, marginBottom: 12, lineHeight: 1.4 }}>{YEAR_FOCUS[lv]}</div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(120px, 1fr))", gap: 8, marginBottom: 10 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(88px, 1fr))", gap: 8, marginBottom: 10 }}>
                 <div style={{ background: "#F2F8FB", borderRadius: 9, padding: "6px 8px", border: `1px solid ${COLORS.sky}` }}>
                   <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.skyDark }}>Set A</div>
                   <div style={{ fontSize: 11, color: COLORS.ink }}>{progressLabel(lv, "A")}</div>
@@ -620,83 +620,83 @@ export default function App() {
                   <div style={{ fontSize: 11, color: COLORS.ink }}>{progressLabel(lv, "C")}</div>
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: "wrap" }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 12 }}>
                 <button
                   onClick={() => startQuiz(lv, 'A')}
                   style={{
-                    flex: "1 1 140px",
-                    minWidth: 130,
-                    display: "inline-flex",
+                    display: "flex",
+                    flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    gap: 6,
+                    gap: 4,
                     border: "none",
                     borderRadius: 12,
-                    padding: "12px 16px",
+                    padding: "12px 8px",
                     background: COLORS.sky,
                     color: "white",
                     cursor: "pointer",
                     fontWeight: 700,
-                    fontSize: 15,
+                    fontSize: 14,
                     fontFamily: "inherit",
-                    flexDirection: "column",
                     lineHeight: 1.15,
+                    width: "100%",
+                    boxSizing: "border-box",
                   }}
                 >
                   <span>📘 Set A</span>
-                  <span style={{ fontSize: 11, opacity: 0.9 }}>{getProgressInfo(lv, "A").resumable ? "Sambung" : "Mula"}</span>
+                  <span style={{ fontSize: 10, opacity: 0.9 }}>{getProgressInfo(lv, "A").resumable ? "Sambung" : "Mula"}</span>
                 </button>
                 <button
                   onClick={() => startQuiz(lv, 'B')}
                   style={{
-                    flex: "1 1 140px",
-                    minWidth: 130,
-                    display: "inline-flex",
+                    display: "flex",
+                    flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    gap: 6,
+                    gap: 4,
                     border: "none",
                     borderRadius: 12,
-                    padding: "12px 16px",
+                    padding: "12px 8px",
                     background: COLORS.sun,
                     color: COLORS.sunDark,
                     opacity: isPremium ? 1 : 0.58,
                     cursor: isPremium ? 'pointer' : 'not-allowed',
                     fontWeight: 700,
-                    fontSize: 15,
+                    fontSize: 14,
                     fontFamily: "inherit",
-                    flexDirection: "column",
                     lineHeight: 1.15,
+                    width: "100%",
+                    boxSizing: "border-box",
                   }}
                 >
                   <span>📙 Set B {!isPremium ? '🔒' : ''}</span>
-                  <span style={{ fontSize: 11, opacity: 0.9 }}>{getProgressInfo(lv, "B").resumable ? "Sambung" : "Mula"}</span>
+                  <span style={{ fontSize: 10, opacity: 0.9 }}>{getProgressInfo(lv, "B").resumable ? "Sambung" : "Mula"}</span>
                 </button>
                 <button
                   onClick={() => startQuiz(lv, 'C')}
                   style={{
-                    flex: "1 1 140px",
-                    minWidth: 130,
-                    display: "inline-flex",
+                    display: "flex",
+                    flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    gap: 6,
+                    gap: 4,
                     border: "none",
                     borderRadius: 12,
-                    padding: "12px 16px",
+                    padding: "12px 8px",
                     background: COLORS.hibiscus,
                     color: "white",
                     opacity: isPremium ? 1 : 0.58,
                     cursor: isPremium ? 'pointer' : 'not-allowed',
                     fontWeight: 700,
-                    fontSize: 15,
+                    fontSize: 14,
                     fontFamily: "inherit",
-                    flexDirection: "column",
                     lineHeight: 1.15,
+                    width: "100%",
+                    boxSizing: "border-box",
                   }}
                 >
                   <span>🧠 KBAT {!isPremium ? '🔒' : ''}</span>
-                  <span style={{ fontSize: 11, opacity: 0.9 }}>{getProgressInfo(lv, "C").resumable ? "Sambung" : "Mula"}</span>
+                  <span style={{ fontSize: 10, opacity: 0.9 }}>{getProgressInfo(lv, "C").resumable ? "Sambung" : "Mula"}</span>
                 </button>
               </div>
             </div>
