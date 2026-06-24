@@ -14,7 +14,7 @@ const COLORS = {
   ink: "#2B2B26",
 };
 
-const BANK = {
+export const BANK = {
   1: {
     A: [
       { type: "kosa-kata", q: "Apakah nama haiwan ini? 🐱", opts: ["Kucing", "Anjing", "Ayam", "Itik"] },
