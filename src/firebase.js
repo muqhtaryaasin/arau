@@ -2,14 +2,27 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// Replace these with your Firebase config
+const requiredKeys = [
+  "VITE_FIREBASE_API_KEY",
+  "VITE_FIREBASE_AUTH_DOMAIN",
+  "VITE_FIREBASE_PROJECT_ID",
+  "VITE_FIREBASE_STORAGE_BUCKET",
+  "VITE_FIREBASE_MESSAGING_SENDER_ID",
+  "VITE_FIREBASE_APP_ID",
+];
+
+const missingKeys = requiredKeys.filter((key) => !import.meta.env[key]);
+if (missingKeys.length) {
+  throw new Error(`Missing Firebase environment variables: ${missingKeys.join(", ")}`);
+}
+
 const firebaseConfig = {
-  apiKey: "AIzaSyBp4WpG7IBnrJwdMvniU70u2dvsZuk6_WE",
-  authDomain: "quizarau.firebaseapp.com",
-  projectId: "quizarau",
-  storageBucket: "quizarau.firebasestorage.app",
-  messagingSenderId: "878014863769",
-  appId: "1:878014863769:web:7543a0d742dd0f69f35b08",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
